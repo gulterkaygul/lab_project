@@ -1,0 +1,347 @@
+Gulab10
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    /* Adjusted Styles for Tablet Screen */
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(120deg, #fafbfb, #2c3e50);
+      font-family: 'Roboto', sans-serif;
+      color: #fff;
+    }
+
+    .atm-container {
+      width: 90vw;
+      max-width: 500px;
+      height: 75vh;
+      max-height: 700px;
+      background: linear-gradient(145deg, #ebade7, #e7cde8);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 0 80px rgba(0,0,0,0.3), inset 0 0 30px rgba(255,255,255,0.1);
+      border: 2px solid rgba(255,255,255,0.1);
+    }
+
+    .screen, .transaction-screen, .withdrawal-screen, .receipt-screen {
+      background: linear-gradient(to bottom, #1a1a1a, #430000);
+      height: 50%;
+      border-radius: 15px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5), inset 0 0 10px rgba(0,255,255,0.1);
+      display: none; /* Hide initially */
+    }
+
+    .welcome-text {
+      font-size: 1.2em;
+      margin-bottom: 8px;
+      color: #e935ef;
+      text-shadow: 0 0 10px rgba(238, 21, 227, 0.5);
+    }
+
+    .pin-display {
+      font-size: 1.8em;
+      letter-spacing: 0.3em;
+      margin: 10px 0;
+      color: #fff;
+    }
+
+    .keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      padding: 20px;
+    }
+
+    .key {
+      background: linear-gradient(145deg, #ab47a4, #e49beb);
+      border: none;
+      color: white;
+      padding: 5px;
+      font-size: 1em;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.2), inset 0 0 5px rgba(255,255,255,0.1);
+    }
+
+    .key:active {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2), inset 0 0 3px rgba(255,255,255,0.1);
+    }
+
+    .key#eraseButton {
+    background: rgb(163, 43, 43) ; /* Override background */
+    border: none;
+    color: white;
+    padding: 5px;
+    font-size: 1em;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2), inset 0 0 5px rgba(255,255,255,0.1);
+  }
+
+   .key#enterButton {
+  background: rgb(32, 131, 37) ; /* Override background */
+  border: none;
+  color: white;
+  padding: 5px;
+  font-size: 1em;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 5px 10px rgba(0,0,0,0.2), inset 0 0 5px rgba(255,255,255,0.1);
+
+  }
+    .transaction-options {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      width: 100%;
+    }
+
+    .withdrawal-options {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      width: 100%;
+    }
+
+    .option-column {
+      width: 45%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option-button, .withdrawal-amount, .manual-entry {
+      background: #ab47a4;
+      padding: 8px;
+      font-size: 0.9em;
+      border-radius: 5px;
+      text-align: center;
+      cursor: pointer;
+      color: #fff;
+    }
+
+    .option-button:hover, .manual-entry:hover {
+      background: #d86dde;
+    }
+
+    .receipt {
+      background-color: #ffc0cb;
+      color: #000;
+      width: 90%;
+      max-width: 300px;
+      padding: 15px;
+      border-radius: 8px;
+      font-size: 0.9em;
+      margin-top: 20px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <div class="atm-container">
+    <!-- PIN Entry Screen -->
+    <div class="screen" id="pinScreen">
+      <h class="welcome-text">Welcome to CyprusBank ATM</h>
+      <p class="insert-text">Please Enter Your Pin</p>
+      <div id="pinDisplay" class="pin-display">----</div>
+    </div>
+    
+    <!-- Transaction Screen -->
+    <div class="transaction-screen" id="transactionScreen">
+      <h class="welcome-text" id="welcomeMessage">Hello, User</h>
+      <div class="transaction-options">
+        <div class="option-column">
+          <div class="option-button">Balance Inquiry</div>
+          <div class="option-button">PIN Change</div>
+          <div class="option-button">Utility Bill Payment</div>
+          <div class="option-button">Other Services</div>
+        </div>
+        <div class="option-column">
+          <div class="option-button" onclick="loadWithdrawalScreen()">Cash Withdrawal</div>
+          <div class="option-button">Fund Transfer</div>
+          <div class="option-button">Mini Statement</div>
+          <div class="option-button">Fast Cash</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Withdrawal Screen -->
+    <div class="withdrawal-screen" id="withdrawalScreen">
+        <h class="welcome-text">Withdrawal Options</h>
+        <div class="withdrawal-options">
+          <div class="withdrawal-amount" onclick="selectAmount(20)">20 €</div>
+          <div class="withdrawal-amount" onclick="selectAmount(200)">200 €</div>
+        </div>
+        <div class="withdrawal-options">
+          <div class="withdrawal-amount" onclick="selectAmount(400)">400 €</div>
+          <div class="withdrawal-amount" onclick="selectAmount(800)">800 €</div>
+        </div>
+        <div class="amount-input">
+          <input type="number" id="amountInput" placeholder="Enter Amount"min="20" 
+          oninput="validateAmount(this)">
+          <button class="option-button" onclick="selectAmount(document.getElementById('amountInput').value)">Enter</button>
+        </div>
+        <button class="option-button" onclick="comeBack()">Come Back</button>
+      </div>
+  
+
+    <!-- Receipt Screen -->
+    <div class="receipt-screen" id="receiptScreen">
+      <h class="welcome-text">Do you want a receipt?</h>
+      <div class="transaction-options">
+        <div onclick="printReceipt()" class="option-button">Yes</div>
+        <div onclick="completeTransaction(false)" class="option-button">No</div>
+      </div>
+    </div>
+
+    <!-- Display Receipt -->
+    <div id="displayReceipt" class="receipt" style="display: none;">
+      <h4>CyprusBank - Lefke Branch</h4>
+      <p id="receiptDetails"></p>
+    </div>
+
+    <!-- Keypad -->
+    <div class="keypad">
+      <button class="key" onclick="enterDigit('1')">1</button>
+      <button class="key" onclick="enterDigit('2')">2</button>
+      <button class="key" onclick="enterDigit('3')">3</button>
+      <button class="key" onclick="enterDigit('4')">4</button>
+      <button class="key" onclick="enterDigit('5')">5</button>
+      <button class="key" onclick="enterDigit('6')">6</button>
+      <button class="key" onclick="enterDigit('7')">7</button>
+      <button class="key" onclick="enterDigit('8')">8</button>
+      <button class="key" onclick="enterDigit('9')">9</button>
+      <button class="key"  id =  "eraseButton" onclick="eraseDigit()">←</button>
+      <button class="key" onclick="enterDigit('0')">0</button>
+      <button class="key" id =  "enterButton" onclick="submitPin()">→</button>
+    </div>
+  </div>
+
+<script>
+  let pin = '';
+  const correctPin = '0000';
+  const names = ["Alex", "Jordan", "Taylor", "Morgan", "Casey", "Riley"];
+  let balance = 2000; // Sample balance
+  let selectedAmount = 0;
+
+  function enterDigit(digit) {
+    if (pin.length < 4) {
+      pin += digit;
+      updatePinDisplay();
+    }
+  }
+
+  function eraseDigit() {
+    pin = pin.slice(0, -1);
+    updatePinDisplay();
+  }
+
+  function updatePinDisplay() {
+    document.getElementById('pinDisplay').textContent = '*'.repeat(pin.length).padEnd(4, '-');
+  }
+
+  function submitPin() {
+    if (pin === correctPin) {
+      loadTransactionScreen();
+    } else {
+      alert('Wrong PIN. Please try again.');
+      pin = '';
+      updatePinDisplay();
+    }
+  }
+
+  function loadTransactionScreen() {
+    const randomName = names[Math.floor(Math.random() * names.length)];
+    document.getElementById('welcomeMessage').textContent = `Hello, ${randomName}`;
+    document.getElementById('pinScreen').style.display = 'none';
+    document.getElementById('transactionScreen').style.display = 'flex';
+  }
+
+  function loadWithdrawalScreen() {
+    document.getElementById('transactionScreen').style.display = 'none';
+    document.getElementById('withdrawalScreen').style.display = 'flex';
+  }
+
+  function selectAmount(amount) {
+    selectedAmount = amount;
+    checkBalance();
+  }
+  
+  function checkBalance() {
+    if (!selectedAmount) {
+      const manualAmount = parseInt(document.getElementById('amountInput').value, 10);
+      if (isNaN(manualAmount) || manualAmount < 20) {
+            alert("Please enter a valid amount of at least 20 euros.");
+            return;
+        }
+
+        selectedAmount = manualAmount;
+    }
+    if (selectedAmount > balance ) {
+      alert("Insufficient balance.");
+      selectedAmount = 0;
+    } else {
+      loadReceiptScreen();
+    }
+  }
+
+  function loadReceiptScreen() {
+    document.getElementById('withdrawalScreen').style.display = 'none';
+    document.getElementById('receiptScreen').style.display = 'flex';
+  }
+
+  function printReceipt() {
+    const now = new Date();
+    const receiptDetails = `
+      Date: ${now.toLocaleDateString()}<br>
+      Time: ${now.toLocaleTimeString()}<br>
+      Branch: Lefke Branch<br>
+      Transaction: Withdrawal<br>
+      Amount: €${selectedAmount}<br>
+      Currency: EUR
+    `;
+    document.getElementById('receiptDetails').innerHTML = receiptDetails;
+    document.getElementById('receiptScreen').style.display = 'none';
+    document.getElementById('displayReceipt').style.display = 'block';
+    completeTransaction(true);
+  }
+
+  function completeTransaction(printReceipt) {
+    balance -= selectedAmount;
+    selectedAmount = 0;
+    document.getElementById('receiptScreen').style.display = 'none';
+    alert('Please retrieve your card.')
+    const keypadButtons = document.querySelectorAll('.key');
+    keypadButtons.forEach(button => {
+        button.disabled = true;
+    });
+    setTimeout(function() {
+        window.location.reload();
+    }, 5000);
+    ;
+    if (!printReceipt) {
+      document.getElementById('displayReceipt').style.display = 'none';
+    
+      setTimeout(function() {
+        window.location.reload();
+    }, 10);
+    }
+  }
+
+  document.getElementById('pinScreen').style.display = 'flex';
+</script>
+</body>
+</html>
